@@ -106,4 +106,56 @@ const signUp = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  try {
+    const { registrationNumber, password } = req.body;
+    if (!registrationNumber || !password) {
+      return res.status(403).json({
+        success: false,
+        message: "All the fields are mandatory,please enter all the fields",
+      });
+    }
+    const user = await User.findOne({ registrationNumber });
+    if (!user) {
+      return res.status(401).json({
+        successs: false,
+        message: "Not an registered User,Please SignUp",
+      });
+    }
+    if (bcrypt.compare(password, user.password)) {
+      const payload = {
+        registrationNumber: user.registrationNumber,
+        id: user._id,
+        accountType: user.accountType,
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        // generate token (combination of header , payload , signature)
+        expiresIn: "20h", // set expiry time;
+      });
+      user.token = token;
+      user.password = undefined;
 
+      const options = {
+        //create cookie and send response
+        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+      };
+      res.cookie("token", token, options).status(200).json({
+        success: true,
+        token,
+        user,
+        message: "Logged in successfully",
+      });
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "Password is incorrect",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Login Failure, please try again",
+    });
+  }
+};
