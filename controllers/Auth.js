@@ -1,5 +1,6 @@
 const User = require("../models/User");
-const OTP = reequire("../models/Otp.js");
+const OTP = require("../models/Otp.js");
+const otpGenerator = require("otp-generator");
 
 const signUp = async (req, res) => {
   try {
@@ -159,3 +160,48 @@ const login = async (req, res) => {
     });
   }
 };
+
+const sendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const alreadyRegistered = await User.findOne({ email });
+    if (alreadyRegistered) {
+      return res.status().json({
+        success: false,
+        message: "Already registered User",
+      });
+    }
+    var otp = otpGenerator.generate(6, {
+      upperCaseAlphabets: false,
+      lowerCaseAlphabets: false,
+      specialChars: false,
+    });
+
+    let result = await OTP.findOne({ otp: otp }); //check unique otp or not
+    while (result) {
+      // if result is true so we regenerate otp;
+      otp = otpGenerator.generate(6, {
+        upperCaseAlphabets: false,
+      });
+    }
+    const otpPayload = { email, otp };
+
+    //create an entry in OTP in DB and this OTP is used in SignUp to find response;
+    const otpBody = await OTP.create(otpPayload);
+    console.log("OTP Body", otpBody);
+
+    res.status(200).json({
+      //return response successful
+      success: true,
+      message: "OTP Sent Successfully",
+      otp,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { signUp, login, sendOTP };
