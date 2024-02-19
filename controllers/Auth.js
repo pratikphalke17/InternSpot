@@ -1,6 +1,14 @@
 const User = require("../models/User");
 const OTP = require("../models/Otp.js");
 const otpGenerator = require("otp-generator");
+const bcrypt=require("bcrypt");
+const jwt=require("jsonwebtoken");
+const mailSender=require("../utils/mailSender.js");
+const Profile=require("../models/Profile")
+const { passwordUpdated } = require("../mailTemplate/passwordUpdate");
+require("dotenv").config();
+const Profile=require("../models/Profile.js");
+
 
 const signUp = async (req, res) => {
   try {
@@ -64,7 +72,7 @@ const signUp = async (req, res) => {
 
     const hashedpassword = await bcrypt.hash(password, 10);
 
-    const profileDetails = Profile.createawait({
+    const profileDetails = Profile.create({
       gender: null,
       dateOfBirth: null,
       panCard: null,
@@ -204,4 +212,49 @@ const sendOTP = async (req, res) => {
   }
 };
 
-module.exports = { signUp, login, sendOTP };
+const changePassword=async(req,res)=>{
+    try{
+       
+        const userDetails=await User.findById(req.user.id);
+        const{oldPassword,confirmPassword,newPassword}=req.body;
+        const passwordCheck= bcrypt.compare(oldPassword,userDetails.password);
+        if(!passwordCheck){
+            return res.status(401).json({
+                success:false,
+                message:"Incorrect password",
+            })
+        }
+        if(newPassword!==confirmPassword){
+            return res.status(403).json({
+                success:false,
+                message:"Password and Confirm Password does not match",
+            })
+        }
+
+        const encryptedPassword=bcrypt.hash(10,newPassword);
+        const updatedUserDetails=await User.findOneAndUpdate(req.user.id,{password:encryptedPassword},{new:true});
+
+         // Send notification email , here passwordUpdated is template of email which is send to user;
+        try {                                                         
+			const emailResponse = await mailSender(updatedUserDetails.email, passwordUpdated(updatedUserDetails.email, `Password updated successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`));
+			console.log("Email sent successfully:", emailResponse.response);
+		   } 
+        catch(error) {
+			return res.status(500).json({
+				success: false,
+				message: "Error occurred while sending email",
+				error: error.message,
+			});
+		}
+    }catch(error){
+        return res.status(500).json({
+            success:false,
+            message:"Error occurred while updating password",
+            error: error.message,
+        })
+    }
+
+
+}
+
+module.exports = { signUp, login, sendOTP,changePassword };
