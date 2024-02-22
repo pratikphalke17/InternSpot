@@ -29,9 +29,14 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true,
     },
-    confirmPassword:{
-        type:String,
-        required:true,
+    // this field is considered during the frontend
+    // confirmPassword:{
+    //     type:String,
+    //     required:true,
+    // },
+    additionalDetails:{
+        type: mongoose.Schema.Types.ObjectId,
+				ref: "Profile",
     },
     token:{
         type:String,
