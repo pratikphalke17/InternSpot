@@ -7,6 +7,7 @@ const cloudinary = require("./config/cloudinary");
 const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/user");
 const profileRoutes = require("./routes/profile");
+const contactRoutes=require("./routes/contactUs");
 const cors=require("cors");
 const fileUpload = require("express-fileupload");
 
@@ -32,6 +33,9 @@ cloudinary.cloudinaryConnect();
 //sertting up the routes
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/profile", profileRoutes);
+
+app.use("/api/v1/contact",contactRoutes);
+
 
 app.get("/", (req, res) => {
   return res.json({
