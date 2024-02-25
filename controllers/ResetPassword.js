@@ -1,11 +1,15 @@
+const { cloudinaryConnect } = require("../config/cloudinary");
 const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto-js");
+// const crypto = require("crypto-js");
+const crypto = require("crypto");
+
 
 const resetPasswordToken = async (req, res) => {
   try {
-    const { email } = req.body.email;
+    const { email } = req.body;
+    console.log("email", email);
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(403).json({
@@ -38,7 +42,8 @@ const resetPasswordToken = async (req, res) => {
         "Email sent successfully, please check email and change password",
     });
   } catch (error) {
-    console.log(first);
+    // console.log(first);
+    console.log("Error",error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong while sending reset password mail",
@@ -59,7 +64,7 @@ const resetPassword = async (req, res) => {
       return res.json({ success: false, message: "Token is invalid" });
     }
 
-    if (!(userDetails.resetPasswordExpires > Date.now())) {
+    if(!(userDetails.resetPasswordExpires < Date.now())) {
       //token time check
       return res.json({
         success: false,
