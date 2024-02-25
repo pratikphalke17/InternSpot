@@ -74,20 +74,29 @@ const signUp = async (req, res) => {
     const profileDetails = await Profile.create({
       gender: null,
       dateOfBirth: null,
-      panCard: null,
-      aadharNo: null,
-      passportAttachment: null,
-      linkedInProfile: null,
-      alqScore: null,
-      autometaScore: null,
       disability: null,
-      aggregateCGPAAttachment: null,
-      twelfthPercentAttachment: null,
-      tenthPercentAttachment: null,
-      // prnNumber: null,
-      branch: null,
       middleName: null,
       contactNumber: null,
+
+      prnNumber: null,
+      branch: null,
+      alqScore: null,
+      autometaScore: null,
+      amcatAttachment: null,
+      aggregateCGPAScore: null,
+      aggregateCGPAAttachment: null,
+      twelfthPercentageScore: null,
+      twelfthPercentAttachment: null,
+      tenthPercentageScore: null,
+      tenthPercentAttachment: null,
+
+      panCardNo: null,
+      panCardAttachment: null,
+      aadharNo: null,
+      aadharAttachment: null,
+      passportAttachment: null,
+      linkedInProfile: null,
+      resumeAttachment: null,
     });
 
     const user = await User.create({
@@ -100,7 +109,7 @@ const signUp = async (req, res) => {
       registrationNumber,
 
       additionalDetails: profileDetails._id,
-      image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
+      profilePhoto: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
     });
     console.log("printing user", user);
 
@@ -219,8 +228,11 @@ const sendOTP = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const userDetails = await User.findById(req.user.id);
-    const { oldPassword, confirmPassword, newPassword } = req.body;
-    const passwordCheck = await bcrypt.compare(oldPassword, userDetails.password);
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const passwordCheck = await bcrypt.compare(
+      oldPassword,
+      userDetails.password
+    );
     if (!passwordCheck) {
       return res.status(401).json({
         success: false,
@@ -234,9 +246,10 @@ const changePassword = async (req, res) => {
       });
     }
 
-    const encryptedPassword = bcrypt.hash(10, newPassword);
+    const encryptedPassword = await bcrypt.hash(newPassword, 10);
+
     const updatedUserDetails = await User.findOneAndUpdate(
-      req.user.id,
+      { _id: req.user.id },
       { password: encryptedPassword },
       { new: true }
     );

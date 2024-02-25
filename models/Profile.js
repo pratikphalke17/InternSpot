@@ -1,15 +1,11 @@
 const mongoose = require("mongoose");
 const profileSchema = new mongoose.Schema({
+  //personal Information
   middleName: {
     type: String,
-    // required:true,
-    // trim: true,
+    trim: true,
   },
   gender: {
-    type: String,
-    // required:true,
-  },
-  branch: {
     type: String,
     // required:true,
   },
@@ -21,23 +17,26 @@ const profileSchema = new mongoose.Schema({
     type: String,
     // required:true,
   },
-  profilePhoto: {
+ 
+  disability: {
     // required: true,
     type: String,
   },
-//   prnNumber: {
-//     type: String,
-//     // required: true,
-//     // unique: true,
-//     // trim: true,
-//   },
-  tenthPercentAttachment: {
+
+
+  //Educational Details
+  branch: {
     type: String,
-    // required: true,
+    // required:true,
   },
-  twelfthPercentAttachment: {
+  prnNumber: {
     type: String,
     // required: true,
+    // unique: true,
+    // trim: true,
+  },
+  aggregateCGPAScore:{
+    type:Number,
   },
   aggregateCGPAAttachment: {
     type: String,
@@ -51,33 +50,50 @@ const profileSchema = new mongoose.Schema({
     // required: true,
     type: Number,
   },
+  amcatAttachment:{
+    type:String,
+  },
+  twelfthPercentageScore:{
+    type:Number,
+  },
+  twelfthPercentAttachment: {
+    type: String,
+    // required: true,
+  },
+  tenthPercentageScore:{
+    type:Number,
+  },
+  tenthPercentAttachment: {
+    type: String,
+    // required: true,
+  },
+  
+  
+  //Other documents
   passportAttachment: {
     type: String,
   },
-  disability: {
-    // required: true,
+  aadharNo:{
+    type:Number,
+  },
+  aadharAttachment: {
     type: String,
+    // required: true,
+    // unique: true,
+  },
+  panCardNo:{
+    type:String,
+  },
+  panCardAttachment: {
+    type: String,
+    // unique: true,
   },
   linkedInProfile: {
     type: String,
     // trim: true,
     // required: true,
   },
-
-  profilePhoto: {
-    // required: true,
-    type: String,
-  },
-  aadharNo: {
-    type: String,
-    // required: true,
-    // unique: true,
-  },
-  panCard: {
-    type: String,
-    // unique: true,
-  },
-  resume: {
+  resumeAttachment: {
     type: String,
     // reauired:true,
   },
