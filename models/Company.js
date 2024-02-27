@@ -48,8 +48,7 @@ const companySchema = new mongoose.Schema({
     type: String,
   },
   gender:{
-    type:string,
-
+    type: String,
   },
 
     // AMCAT Exam Criteria
@@ -59,7 +58,6 @@ const companySchema = new mongoose.Schema({
   autometaScore:{
     type:Number,
   },
- 
 
   // Salary Offered
   baseSalary: {
@@ -72,19 +70,17 @@ const companySchema = new mongoose.Schema({
   allowances: {
     type: Number,
   },
+  // Rounds
+  datePosted:{
+    type:Date,
+    default:Date.now(),
+  },
+  rounds:[
+    {
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"Rounds",
+    }
+  ],
 
-  //selection process
-  numberOfRounds: {
-    type: String,
-    require: true,
-  },
-  nameOfRounds: {
-    type: String,
-    required: true,
-  },
-  detailsOfRounds: {
-    type: String,
-    required: true,
-  },
 });
 module.exports = mongoose.model("Company", companySchema);
