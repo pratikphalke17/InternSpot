@@ -1,4 +1,5 @@
 const Company = require("../models/Company");
+const Round = require("../models/Rounds");
 
 exports.Company = async(req,res)=>{
     try{
@@ -72,5 +73,38 @@ exports.deleteCompany = async(req,res)=>{
             success:false,
             message:error.message
         })
+    }
+}
+
+// create rounds
+exports.createRound = async(req,res)=>{
+    try{
+        const {company,roundName,roundNumber,date,roundDetail} = req.body;
+
+
+        const round = new Round({
+            company,roundName,roundNumber,date,roundDetail
+        });
+
+        const savedRound = await round.save();
+
+        const updatedCompany = await Company.findByIdAndUpdate(
+            company,
+            {$push:{rounds:savedRound._id}},
+            {new:true}
+        ).populate("rounds")
+        .exec()
+
+        res.status(200).json({
+            success:true,
+            data:updatedCompany,
+            message:"Round added successfully"
+        })
+    }
+    catch{
+        return res.status(500)
+        .json({
+            data:"Internal Server Error",
+        });
     }
 }

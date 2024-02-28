@@ -21,6 +21,11 @@ const roundSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    
+    selected:[
+        {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+    }
+    ],
 })
 module.exports = mongoose.model("Rounds", roundSchema);
