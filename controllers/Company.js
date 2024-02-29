@@ -3,10 +3,10 @@ const Round = require("../models/Rounds");
 
 exports.Company = async(req,res)=>{
     try{
-        const {nameOfCompany,descriptionOfCompany,descriptionOfRole,jobLocation,cgpa,tenthCriteria,twelfthCriteria,backlog,disabilityCriteria,gender,elqScore,autometaScore,baseSalary,bonuses,allowances,numberOfRounds,nameOfRounds,detailsOfRounds} = req.body;
+        const {nameOfCompany,descriptionOfCompany,descriptionOfRole,jobLocation,cgpa,tenthCriteria,twelfthCriteria,backlog,disabilityCriteria,gender,elqScore,autometaScore,baseSalary,bonuses,allowances} = req.body;
 
         const company = new Company({
-            nameOfCompany,descriptionOfCompany,descriptionOfRole,jobLocation,cgpa,tenthCriteria,twelfthCriteria,backlog,disabilityCriteria,gender,elqScore,autometaScore,baseSalary,bonuses,allowances,numberOfRounds,nameOfRounds,detailsOfRounds
+            nameOfCompany,descriptionOfCompany,descriptionOfRole,jobLocation,cgpa,tenthCriteria,twelfthCriteria,backlog,disabilityCriteria,gender,elqScore,autometaScore,baseSalary,bonuses,allowances
         })
 
         const savedCompany = await company.save();
@@ -28,11 +28,11 @@ exports.Company = async(req,res)=>{
 exports.updateCompany = async(req,res)=>{
     try{
         const {id} = req.params;
-        const {nameOfCompany,descriptionOfCompany,descriptionOfRole,jobLocation,cgpa,tenthCriteria,twelfthCriteria,backlog,disabilityCriteria,gender,elqScore,autometaScore,baseSalary,bonuses,allowances,numberOfRounds,nameOfRounds,detailsOfRounds} = req.body;
+        const {nameOfCompany,descriptionOfCompany,descriptionOfRole,jobLocation,cgpa,tenthCriteria,twelfthCriteria,backlog,disabilityCriteria,gender,elqScore,autometaScore,baseSalary,bonuses,allowances} = req.body;
 
         const updatedCompany = await Company.findByIdAndUpdate(
             {_id:id},
-            {nameOfCompany,descriptionOfCompany,descriptionOfRole,jobLocation,cgpa,tenthCriteria,twelfthCriteria,backlog,disabilityCriteria,gender,elqScore,autometaScore,baseSalary,bonuses,allowances,numberOfRounds,nameOfRounds,detailsOfRounds},
+            {nameOfCompany,descriptionOfCompany,descriptionOfRole,jobLocation,cgpa,tenthCriteria,twelfthCriteria,backlog,disabilityCriteria,gender,elqScore,autometaScore,baseSalary,bonuses,allowances},
         )
 
         res.status(200)
@@ -76,6 +76,25 @@ exports.deleteCompany = async(req,res)=>{
     }
 }
 
+exports.getCompany = async(req,res)=>{
+    try{
+        const allCompanies = await Company.find().populate("rounds").exec();
+
+        res.status(200)
+        .json({
+            success:true,
+            data:allCompanies,
+            message:"Entire company data fetched",
+        })
+    }
+    catch{
+        return res.status(500)
+        .json({
+            success:false,
+            error:"Internal server error",
+        })
+    }
+}
 // create rounds
 exports.createRound = async(req,res)=>{
     try{
@@ -97,7 +116,7 @@ exports.createRound = async(req,res)=>{
 
         res.status(200).json({
             success:true,
-            data:updatedCompany,
+            data:savedRound,
             message:"Round added successfully"
         })
     }
@@ -108,3 +127,4 @@ exports.createRound = async(req,res)=>{
         });
     }
 }
+
