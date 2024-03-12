@@ -9,6 +9,7 @@ const userRoutes = require("./routes/user");
 const profileRoutes = require("./routes/profile");
 const contactRoutes=require("./routes/contactUs");
 const adminRoutes = require("./routes/admin");
+const applyRoutes = require("./routes/apply");
 const cors=require("cors");
 const fileUpload = require("express-fileupload");
 
@@ -38,6 +39,7 @@ app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/contact",contactRoutes);
 
 app.use("/api/v1/admin",adminRoutes);
+app.use("/api/v1/application",applyRoutes);
 
 app.get("/", (req, res) => {
   return res.json({
